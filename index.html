@@ -1,41 +1,32 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sport hub</title>
-    <link rel="stylesheet" href="style.css" >
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Hub</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
-    <header>
-        <h1>Sports Hub</h1>
-        <p> A website powered by a REST API </p>
-    </header>
-    <main>
+  <header>
+    <h1>Sports Hub</h1>
+    <p>A website powered by a REST API</p>
+  </header>
 
-        <!-- SEARCH -->
-        <section class="search">
-            <input type="text" id="searchInput" placeholder="Search for a sport...">
-            <button onclick="searchCars()"> Search </button>
-            <button class="secondary" onclick="loadCars()"> Show All </button>
+  <main>
+    <section class="search">
+      <input type="text" id="searchInput" placeholder="Search for a sport...">
+      <button onclick="searchSports()">Search</button>
+      <button class="secondary" onclick="getAllSports()">Show All</button>
+    </section>
 
-        </section>
+    <section>
+      <h2>Sports</h2>
+      <div id="carList">
+        Loading sports...
+      </div>
+    </section>
+  </main>
 
-        <section>
-            <h2>Sports</h2>
-            <div id="carList" class="car-list">
-                Loading sports...
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <p> Data provided by the Simple sport API </p>
-    </footer>
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

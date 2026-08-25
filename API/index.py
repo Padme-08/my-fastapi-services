@@ -186,8 +186,8 @@ def home():
         "message": "Welcome to the Sports Hub API!",
         "endpoints": [
             "/sports",
-            "/sports/{id}",
-            "/sports/search"
+            "/sports/search",
+            "/sports/{id}"
         ]
     }
 
@@ -201,23 +201,18 @@ def get_sports():
     }
 
 
-# GET ONE SPORT
-@app.get("/sports/{sport_id}")
-def get_sport(sport_id: int):
-    for sport in sports:
-        if sport["id"] == sport_id:
-            return sport
-
-    raise HTTPException(
-        status_code=404,
-        detail="Sport not found."
-    )
-
-
-# SEARCH SPORTS
+# SEARCH SPORTS (Defined BEFORE /sports/{sport_id} so "search" isn't parsed as an ID)
 @app.get("/sports/search")
-def search_sports(q: str = Query(..., min_length=1)):
-    query = q.lower()
+def search_sports(q: str = Query(default="", min_length=0)):
+    query = q.lower().strip()
+    
+    if not query:
+        return {
+            "query": q,
+            "count": len(sports),
+            "results": sports
+        }
+
     results = []
     for sport in sports:
         searchable_text = (
@@ -234,3 +229,16 @@ def search_sports(q: str = Query(..., min_length=1)):
         "count": len(results),
         "results": results
     }
+
+
+# GET ONE SPORT
+@app.get("/sports/{sport_id}")
+def get_sport(sport_id: int):
+    for sport in sports:
+        if sport["id"] == sport_id:
+            return sport
+
+    raise HTTPException(
+        status_code=404,
+        detail="Sport not found."
+    )

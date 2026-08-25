@@ -1,90 +1,101 @@
-const API_URL = "https://my-fastapi-services.vercel.app";
+const API_URL = "http://127.0.0.1:8000";
 
+// Run initial fetch when DOM content is loaded
+document.addEventListener("DOMContentLoaded", getAllSports);
 
-// GET ALL CARS
-async function loadCars() {
-    try {
-        const response = await fetch(`${API_URL}/cars`);
-        const data = await response.json();
-        displayCars(data);
+async function getAllSports() {
+  try {
+    const response = await fetch(`${API_URL}/sports`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    catch (error) {
-        console.error(error);
-        document.getElementById("carList").innerHTML = "Unable to connect to the API.";
-    }
+    const data = await response.json();
+    console.log("All sports response:", data);
+    
+    displaySports(data.sports || data.results || []);
+  } catch (error) {
+    console.error("Error fetching sports:", error);
+    showError("Failed to load sports from API.");
+  }
 }
 
+async function searchSports() {
+  const searchInput = document.getElementById("searchInput") || document.querySelector('input[type="text"]');
+  const query = searchInput ? searchInput.value.trim() : "";
 
-// DISPLAY CARS
-function displayCars(cars) {
-    const carList =
-        document.getElementById("carList");
+  if (!query) {
+    getAllSports();
+    return;
+  }
 
-    carList.innerHTML = "";
+  try {
+    // Try primary search endpoint using 'q'
+    let response = await fetch(`${API_URL}/sports/search?q=${encodeURIComponent(query)}`);
 
-    cars.forEach(car => {
-        const card = document.createElement("div");
-        card.className = "car-card";
-        card.innerHTML = `
-            <div class="car-year">${car.year}</div>
-            <h3>${car.make} ${car.model}</h3>
-            <p class="car-engine">${car.engine}</p>
-            <p>${car.horsepower} horsepower</p>
-            <p>${car.description}</p>
-            <button onclick="viewCar(${car.id})"> View Details</button>
-        `;
+    // Fallback if backend expects 'query' instead of 'q'
+    if (response.status === 422 || response.status === 400) {
+      response = await fetch(`${API_URL}/sports/search?query=${encodeURIComponent(query)}`);
+    }
 
-        carList.appendChild(card);
-    });
+    // Fallback if route is /search instead of /sports/search
+    if (response.status === 404) {
+      response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+    }
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Search response payload:", data);
+
+    // Parse array response regardless of key structure
+    const resultsList = Array.isArray(data) 
+      ? data 
+      : (data.results || data.sports || []);
+
+    displaySports(resultsList);
+  } catch (error) {
+    console.error("Error searching sports:", error);
+    showError("Failed to search sports. Check browser console (F12) for response details.");
+  }
 }
 
-// GET ONE CAR
-async function viewCar(id) {
+function displaySports(sportsList) {
+  const container = document.getElementById("carList") || document.getElementById("sportsList");
+  
+  if (!container) {
+    console.error("Display container element not found in DOM.");
+    return;
+  }
 
-    try {
-        const response = await fetch(`${API_URL}/cars/${id}`);
-        const car = await response.json();
+  container.innerHTML = "";
 
-        alert(`
-            ${car.year} ${car.make} ${car.model}
-            Engine:
-            ${car.engine}
+  if (!Array.isArray(sportsList) || sportsList.length === 0) {
+    container.innerHTML = "<p>No sports found.</p>";
+    return;
+  }
 
-            Horsepower:
-            ${car.horsepower}
-
-            Description:
-            ${car.description}
-        `);
-    }
-    catch (error) {
-        console.error(error);
-        alert("Unable to retrieve car.");
-    }
-
+  sportsList.forEach(sport => {
+    const card = document.createElement("div");
+    card.className = "sport-card";
+    card.innerHTML = `
+      <h3>${sport.name || "N/A"}</h3>
+      <p><strong>Category:</strong> ${sport.category || "N/A"}</p>
+      <p><strong>Players per Team:</strong> ${sport.players_per_team ?? "N/A"}</p>
+      <p><strong>Duration:</strong> ${sport.duration || "N/A"}</p>
+      <p>${sport.description || ""}</p>
+      <hr>
+    `;
+    container.appendChild(card);
+  });
 }
 
-// SEARCH
-async function searchCars() {
-
-    const query = document.getElementById("searchInput").value;
-    if (!query) {
-        loadCars();
-        return;
-    }
-    try {
-        const response =
-            await fetch(`${API_URL}/cars/search?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        displayCars(data);
-    }
-
-    catch (error) {
-        console.error(error);
-        alert("Search failed.");
-    }
+function showError(message) {
+  const container = document.getElementById("carList") || document.getElementById("sportsList");
+  if (container) {
+    container.innerHTML = `<p style="color: red;">${message}</p>`;
+  }
 }
-
-loadCars();
