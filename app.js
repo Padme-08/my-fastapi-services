@@ -64,12 +64,9 @@ async function searchSports() {
 }
 
 function displaySports(sportsList) {
-  const container = document.getElementById("carList") || document.getElementById("sportsList");
+  const container = document.getElementById("sportsList") || document.getElementById("carList");
   
-  if (!container) {
-    console.error("Display container element not found in DOM.");
-    return;
-  }
+  if (!container) return;
 
   container.innerHTML = "";
 
@@ -81,13 +78,21 @@ function displaySports(sportsList) {
   sportsList.forEach(sport => {
     const card = document.createElement("div");
     card.className = "sport-card";
+    
+    // Default fallback image if sport.image fails or is missing
+    const defaultImage = "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&q=80";
+    const imageUrl = sport.image || defaultImage;
+
     card.innerHTML = `
+      <img src="${imageUrl}" 
+           alt="${sport.name}" 
+           class="sport-image" 
+           onerror="this.onerror=null; this.src='${defaultImage}';">
       <h3>${sport.name || "N/A"}</h3>
       <p><strong>Category:</strong> ${sport.category || "N/A"}</p>
       <p><strong>Players per Team:</strong> ${sport.players_per_team ?? "N/A"}</p>
       <p><strong>Duration:</strong> ${sport.duration || "N/A"}</p>
       <p>${sport.description || ""}</p>
-      <hr>
     `;
     container.appendChild(card);
   });

@@ -23,7 +23,8 @@ sports = [
         "category": "Team Sport",
         "players_per_team": 5,
         "duration": "48 minutes",
-        "description": "A fast-paced team sport where players score points by shooting a ball through an elevated hoop."
+        "description": "A fast-paced team sport where players score points by shooting a ball through an elevated hoop.",
+        "image": "https://en.reformsports.com/what-are-the-rules-of-basketball/"
     },
     {
         "id": 2,
