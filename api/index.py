@@ -1,9 +1,10 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
-# Enable CORS for local testing and cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -11,6 +12,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+def read_root():
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
+    return {"message": "Welcome to the Cellphones Hub API!"}
 
 # Cellphone database updated with your local image paths from the images folder
 cellphones_db = [
