@@ -3,30 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sports Hub</title>
+  <title>Cellphones Hub</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>Sports Hub</h1>
+    <h1>Cellphones Hub</h1>
     <p>A website powered by a REST API</p>
   </header>
 
   <main>
     <section class="search-container">
-      <input type="text" id="searchInput" placeholder="Search for a sport...">
-      <button onclick="searchSports()">Search</button>
-      <button class="secondary" onclick="getAllSports()">Show All</button>
+      <input type="text" id="searchInput" placeholder="Search for a cellphone...">
+      <button onclick="searchCellphones()">Search</button>
+      <button class="secondary" onclick="getAllCellphones()">Show All</button>
     </section>
 
     <section>
-      <h2>Sports</h2>
-      <div id="sportsList">
-        Loading sports...
+      <h2>Cellphones</h2>
+      <div id="cellphonesList">
+        Loading cellphones...
       </div>
     </section>
   </main>
 
+  <!-- Pointing to app.js to match your folder structure -->
   <script src="app.js"></script>
 </body>
 </html>

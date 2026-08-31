@@ -1,106 +1,98 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:8000/cellphones";
 
-// Run initial fetch when DOM content is loaded
-document.addEventListener("DOMContentLoaded", getAllSports);
+document.addEventListener("DOMContentLoaded", () => {
+  getAllCellphones();
+});
 
-async function getAllSports() {
-  try {
-    const response = await fetch(`${API_URL}/sports`);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+function getAllCellphones() {
+  const listContainer = document.getElementById("cellphonesList");
+  listContainer.innerHTML = "<p style='color: #94a3b8; grid-column: 1/-1; text-align: center;'>Loading catalog...</p>";
 
-    const data = await response.json();
-    console.log("All sports response:", data);
-    
-    displaySports(data.sports || data.results || []);
-  } catch (error) {
-    console.error("Error fetching sports:", error);
-    showError("Failed to load sports from API.");
-  }
+  fetch(API_URL)
+    .then(response => response.json())
+    .then(data => {
+      displayCellphones(data.cellphones);
+    })
+    .catch(error => {
+      console.error("Error fetching cellphones:", error);
+      listContainer.innerHTML = "<p style='color: #f87171; grid-column: 1/-1; text-align: center;'>Failed to fetch data from API. Please check your backend terminal.</p>";
+    });
 }
 
-async function searchSports() {
-  const searchInput = document.getElementById("searchInput") || document.querySelector('input[type="text"]');
-  const query = searchInput ? searchInput.value.trim() : "";
+function searchCellphones() {
+  const query = document.getElementById("searchInput").value.trim();
+  const listContainer = document.getElementById("cellphonesList");
+  listContainer.innerHTML = "<p style='color: #94a3b8; grid-column: 1/-1; text-align: center;'>Searching...</p>";
 
-  if (!query) {
-    getAllSports();
+  fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`)
+    .then(response => response.json())
+    .then(data => {
+      displayCellphones(data.results);
+    })
+    .catch(error => {
+      console.error("Error searching cellphones:", error);
+      listContainer.innerHTML = "<p style='color: #f87171; grid-column: 1/-1; text-align: center;'>Search failed.</p>";
+    });
+}
+
+function displayCellphones(cellphones) {
+  const listContainer = document.getElementById("cellphonesList");
+  listContainer.innerHTML = "";
+
+  if (!cellphones || cellphones.length === 0) {
+    listContainer.innerHTML = "<p style='color: #94a3b8; grid-column: 1/-1; text-align: center;'>No phones found matching your query.</p>";
     return;
   }
 
-  try {
-    // Try primary search endpoint using 'q'
-    let response = await fetch(`${API_URL}/sports/search?q=${encodeURIComponent(query)}`);
+  cellphones.forEach(phone => {
+    const cardContainer = document.createElement("div");
+    cardContainer.className = "card-container";
 
-    // Fallback if backend expects 'query' instead of 'q'
-    if (response.status === 422 || response.status === 400) {
-      response = await fetch(`${API_URL}/sports/search?query=${encodeURIComponent(query)}`);
-    }
+    cardContainer.addEventListener("click", () => {
+      cardContainer.classList.toggle("flipped");
+    });
 
-    // Fallback if route is /search instead of /sports/search
-    if (response.status === 404) {
-      response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
-    }
+    cardContainer.innerHTML = `
+      <div class="card-inner">
+        <!-- Front: Photo + Name -->
+        <div class="card-front">
+          <span class="brand-badge">${phone.brand}</span>
+          <img src="${phone.image}" alt="${phone.name}" onerror="this.src='https://via.placeholder.com/250x300?text=No+Image';">
+          <div class="title-container">
+            <h3>${phone.name}</h3>
+            <span class="action-tag">Click for specs ⚡</span>
+          </div>
+        </div>
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+        <!-- Back: 14 Data Fields -->
+        <div class="card-back">
+          <div class="back-header">
+            <h4>${phone.name}</h4>
+            <span class="price-tag">${phone.price}</span>
+          </div>
+          
+          <div class="specs-scroll">
+            <div class="spec-item"><span class="spec-label">1. ID:</span><span class="spec-value">${phone.id}</span></div>
+            <div class="spec-item"><span class="spec-label">2. Brand:</span><span class="spec-value">${phone.brand}</span></div>
+            <div class="spec-item"><span class="spec-label">3. Model No:</span><span class="spec-value">${phone.model_number}</span></div>
+            <div class="spec-item"><span class="spec-label">4. Year:</span><span class="spec-value">${phone.release_year}</span></div>
+            <div class="spec-item"><span class="spec-label">5. Display:</span><span class="spec-value">${phone.display}</span></div>
+            <div class="spec-item"><span class="spec-label">6. Chipset:</span><span class="spec-value">${phone.chipset}</span></div>
+            <div class="spec-item"><span class="spec-label">7. RAM:</span><span class="spec-value">${phone.ram}</span></div>
+            <div class="spec-item"><span class="spec-label">8. Storage:</span><span class="spec-value">${phone.storage}</span></div>
+            <div class="spec-item"><span class="spec-label">9. Battery:</span><span class="spec-value">${phone.battery}</span></div>
+            <div class="spec-item"><span class="spec-label">10. Price:</span><span class="spec-value">${phone.price}</span></div>
+            <div class="spec-item"><span class="spec-label">11. OS:</span><span class="spec-value">${phone.os}</span></div>
+            <div class="spec-item"><span class="spec-label">12. Weight:</span><span class="spec-value">${phone.weight}</span></div>
+            <div class="spec-item"><span class="spec-label">13. Camera:</span><span class="spec-value">${phone.camera_setup}</span></div>
+            <div class="spec-item"><span class="spec-label">14. Description:</span><span class="spec-value">${phone.description}</span></div>
+          </div>
 
-    const data = await response.json();
-    console.log("Search response payload:", data);
-
-    // Parse array response regardless of key structure
-    const resultsList = Array.isArray(data) 
-      ? data 
-      : (data.results || data.sports || []);
-
-    displaySports(resultsList);
-  } catch (error) {
-    console.error("Error searching sports:", error);
-    showError("Failed to search sports. Check browser console (F12) for response details.");
-  }
-}
-
-function displaySports(sportsList) {
-  const container = document.getElementById("sportsList") || document.getElementById("carList");
-  
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  if (!Array.isArray(sportsList) || sportsList.length === 0) {
-    container.innerHTML = "<p>No sports found.</p>";
-    return;
-  }
-
-  sportsList.forEach(sport => {
-    const card = document.createElement("div");
-    card.className = "sport-card";
-    
-    // Default fallback image if sport.image fails or is missing
-    const defaultImage = "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&q=80";
-    const imageUrl = sport.image || defaultImage;
-
-    card.innerHTML = `
-      <img src="${imageUrl}" 
-           alt="${sport.name}" 
-           class="sport-image" 
-           onerror="this.onerror=null; this.src='${defaultImage}';">
-      <h3>${sport.name || "N/A"}</h3>
-      <p><strong>Category:</strong> ${sport.category || "N/A"}</p>
-      <p><strong>Players per Team:</strong> ${sport.players_per_team ?? "N/A"}</p>
-      <p><strong>Duration:</strong> ${sport.duration || "N/A"}</p>
-      <p>${sport.description || ""}</p>
+          <div class="flip-back-hint">Click card to return ↺</div>
+        </div>
+      </div>
     `;
-    container.appendChild(card);
-  });
-}
 
-function showError(message) {
-  const container = document.getElementById("carList") || document.getElementById("sportsList");
-  if (container) {
-    container.innerHTML = `<p style="color: red;">${message}</p>`;
-  }
+    listContainer.appendChild(cardContainer);
+  });
 }

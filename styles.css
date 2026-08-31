@@ -1,164 +1,279 @@
-/* Modern Reset & Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 body {
-  background-color: #f4f7f6;
-  color: #333333;
-  line-height: 1.6;
-  padding: 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  color: #f8fafc;
+  min-height: 100vh;
+  padding: 40px 20px;
 }
 
-/* Header Section */
-h1 {
-  font-size: 2.5rem;
-  color: #1a252f;
-  margin-bottom: 0.25rem;
+/* Header Design */
+header {
+  text-align: center;
+  margin-bottom: 40px;
 }
 
-p {
-  color: #666666;
+header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
 }
 
 header p {
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  color: #94a3b8;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-/* Search Controls */
-.search-container, 
-div:has(> input[type="text"]) {
+/* Search Bar Container */
+.search-container {
   display: flex;
-  gap: 10px;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 550px;
+  margin: 0 auto 45px auto;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
 input[type="text"] {
   flex: 1;
-  min-width: 240px;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(15, 23, 42, 0.6);
+  color: #f8fafc;
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
 input[type="text"]:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  box-shadow: 0 0 0 2px #38bdf8;
 }
 
 button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
-  background-color: #007bff;
+  padding: 12px 22px;
+  border-radius: 10px;
   border: none;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
 }
 
 button:hover {
-  background-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.5);
 }
 
-button:active {
-  transform: scale(0.98);
+button.secondary {
+  background: rgba(51, 65, 85, 0.6);
+  color: #cbd5e1;
+  box-shadow: none;
 }
 
-button.secondary, 
-button:nth-of-type(2) {
-  background-color: #6c757d;
+button.secondary:hover {
+  background: rgba(71, 85, 105, 0.8);
+  color: #f8fafc;
 }
 
-button.secondary:hover, 
-button:nth-of-type(2):hover {
-  background-color: #5a6268;
-}
-
-/* Section Headings */
-h2 {
-  font-size: 1.8rem;
-  color: #2c3e50;
-  margin-bottom: 1.25rem;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 0.5rem;
-}
-
-/* Container & Cards Grid */
-#sportsList, #carList {
+/* Responsive Grid Layout */
+#cellphonesList {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.sport-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e9ecef;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* 3D Flip Card Container */
+.card-container {
+  perspective: 1200px;
+  height: 490px;
+  cursor: pointer;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+.card-container.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-container:hover .card-front {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15);
+}
+
+/* Card Front: Image + Title */
+.card-front {
   display: flex;
   flex-direction: column;
+  padding: 24px;
+  justify-content: space-between;
+  align-items: center;
+  background: radial-gradient(circle at top, rgba(51, 65, 85, 0.4), rgba(15, 23, 42, 0.8));
 }
 
-.sport-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+.card-front .brand-badge {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
 }
 
-.sport-card h3 {
-  color: #007bff;
-  font-size: 1.35rem;
-  margin-bottom: 0.75rem;
-}
-
-.sport-card p {
-  font-size: 0.95rem;
-  color: #4a5568;
-  margin-bottom: 0.5rem;
-}
-
-.sport-image {
+.card-front img {
   width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  height: 270px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.4));
+  transition: transform 0.3s ease;
 }
 
-.sport-card p strong {
-  color: #2d3748;
+.card-container:hover .card-front img {
+  transform: scale(1.04);
 }
 
-.sport-card p:last-of-type {
-  margin-top: 0.5rem;
-  color: #718096;
+.card-front .title-container {
+  text-align: center;
+  width: 100%;
 }
 
-.sport-card hr {
-  display: none; /* Replaces default hr tag with clean card spacing */
+.card-front h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 6px;
 }
 
-/* Error & Status Messages */
-p[style*="color: red"], 
-p:contains("No sports found") {
+.card-front .action-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #94a3b8;
   font-weight: 500;
+}
+
+/* Card Back: Detailed Specs */
+.card-back {
+  transform: rotateY(180deg);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #0f172a;
+}
+
+.card-back .back-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-back .back-header h4 {
   font-size: 1.1rem;
-  grid-column: 1 / -1;
-  padding: 1rem;
-  background-color: #fff5f5;
-  border-radius: 8px;
-  border-left: 4px solid #e53e3e;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.card-back .price-tag {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.card-back .specs-scroll {
+  overflow-y: auto;
+  padding-right: 6px;
+  flex: 1;
+}
+
+/* Custom Scrollbar for Spec List */
+.specs-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.specs-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.spec-item {
+  display: flex;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin-bottom: 7px;
+  padding-bottom: 5px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+}
+
+.spec-label {
+  width: 105px;
+  flex-shrink: 0;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.spec-value {
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.card-back .flip-back-hint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #38bdf8;
+  margin-top: 10px;
+  font-weight: 600;
 }
