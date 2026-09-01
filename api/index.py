@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles  # 1. Import StaticFiles
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. Mount the 'images' folder so /images/filename.jpg requests work
+# Mount the 'images' folder so /images/filename.jpg requests work
 app.mount("/images", StaticFiles(directory="images"), name="images")
 
 @app.get("/")
@@ -23,7 +23,7 @@ def read_root():
         return FileResponse("index.html")
     return {"message": "Welcome to the Cellphones Hub API!"}
 
-# Cellphone database updated with local image paths matching the files in /images
+# Cellphone database updated with local image paths and prices in PHP (₱)
 cellphones_db = [
     {
         "id": 1,
@@ -36,7 +36,7 @@ cellphones_db = [
         "ram": "8 GB",
         "storage": "256 GB",
         "battery": "4422 mAh",
-        "price": "$1,199",
+        "price": "₱84,990",
         "os": "iOS 17",
         "weight": "221 g",
         "camera_setup": "48 MP Main + 12 MP Periscope + 12 MP Ultrawide",
@@ -54,7 +54,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "128 GB",
         "battery": "5050 mAh",
-        "price": "$999",
+        "price": "₱57,990",
         "os": "Android 14",
         "weight": "213 g",
         "camera_setup": "50 MP Main + 48 MP Telephoto + 48 MP Ultrawide",
@@ -72,7 +72,7 @@ cellphones_db = [
         "ram": "8 GB",
         "storage": "128 GB",
         "battery": "4492 mAh",
-        "price": "$499",
+        "price": "₱28,990",
         "os": "Android 14",
         "weight": "188 g",
         "camera_setup": "64 MP Main + 13 MP Ultrawide",
@@ -90,7 +90,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "256 GB",
         "battery": "5400 mAh",
-        "price": "$650",
+        "price": "₱36,990",
         "os": "Android 14, Realme UI 5.0",
         "weight": "218 g",
         "camera_setup": "50 MP Main + 50 MP Periscope + 8 MP Ultrawide",
@@ -108,7 +108,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "256 GB",
         "battery": "5000 mAh",
-        "price": "$1,399",
+        "price": "₱80,990",
         "os": "Android 14",
         "weight": "192 g",
         "camera_setup": "48 MP Main + 12 MP Optical Zoom + 12 MP Ultrawide",
@@ -126,7 +126,7 @@ cellphones_db = [
         "ram": "16 GB",
         "storage": "512 GB",
         "battery": "5400 mAh",
-        "price": "$899",
+        "price": "₱59,999",
         "os": "Android 14, Funtouch 14",
         "weight": "225 g",
         "camera_setup": "50 MP 1-inch Main + 50 MP Zeiss APO + 50 MP Ultra",
@@ -144,7 +144,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "256 GB",
         "battery": "4610 mAh",
-        "price": "$799",
+        "price": "₱45,999",
         "os": "Android 14, HyperOS",
         "weight": "193 g",
         "camera_setup": "50 MP Leica Main + 50 MP Telephoto + 50 MP Ultra",
@@ -162,7 +162,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "512 GB",
         "battery": "5000 mAh",
-        "price": "$1,299",
+        "price": "₱92,990",
         "os": "Android 14, One UI 6.1",
         "weight": "232 g",
         "camera_setup": "200 MP Main + 50 MP Periscope + 10 MP Tele + 12 MP Ultra",
@@ -180,7 +180,7 @@ cellphones_db = [
         "ram": "16 GB",
         "storage": "512 GB",
         "battery": "5400 mAh",
-        "price": "$799",
+        "price": "₱63,990",
         "os": "Android 14, OxygenOS 14",
         "weight": "220 g",
         "camera_setup": "50 MP Main + 64 MP Periscope + 48 MP Ultrawide",
@@ -198,7 +198,7 @@ cellphones_db = [
         "ram": "16 GB",
         "storage": "512 GB",
         "battery": "5500 mAh",
-        "price": "$1,199",
+        "price": "₱69,995",
         "os": "Android 14, ROG UI",
         "weight": "225 g",
         "camera_setup": "50 MP Gimbal Main + 32 MP Telephoto + 13 MP Ultrawide",
@@ -216,7 +216,7 @@ cellphones_db = [
         "ram": "8 GB",
         "storage": "128 GB",
         "battery": "5000 mAh",
-        "price": "$449",
+        "price": "₱24,990",
         "os": "Android 13, One UI 5.1",
         "weight": "202 g",
         "camera_setup": "50 MP Main + 12 MP Ultrawide + 5 MP Macro",
@@ -234,7 +234,7 @@ cellphones_db = [
         "ram": "16 GB",
         "storage": "1 TB",
         "battery": "4500 mAh",
-        "price": "$999",
+        "price": "₱57,990",
         "os": "Android 14, Hello UI",
         "weight": "197 g",
         "camera_setup": "50 MP Main + 64 MP Periscope + 50 MP Ultrawide",
@@ -252,7 +252,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "512 GB",
         "battery": "5600 mAh",
-        "price": "$1,099",
+        "price": "₱59,999",
         "os": "Android 14, MagicOS 8.0",
         "weight": "229 g",
         "camera_setup": "50 MP Main + 180 MP Telephoto + 50 MP Ultrawide",
@@ -270,7 +270,7 @@ cellphones_db = [
         "ram": "6 GB",
         "storage": "128 GB",
         "battery": "3349 mAh",
-        "price": "$799",
+        "price": "₱56,990",
         "os": "iOS 17",
         "weight": "171 g",
         "camera_setup": "48 MP Main + 12 MP Ultrawide",
@@ -288,7 +288,7 @@ cellphones_db = [
         "ram": "8 GB",
         "storage": "256 GB",
         "battery": "3700 mAh",
-        "price": "$999",
+        "price": "₱64,990",
         "os": "Android 13, One UI 5.1.1",
         "weight": "187 g",
         "camera_setup": "12 MP Main + 12 MP Ultrawide",
@@ -306,7 +306,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "512 GB",
         "battery": "5000 mAh",
-        "price": "$699",
+        "price": "₱37,999",
         "os": "Android 13, MIUI 14",
         "weight": "206 g",
         "camera_setup": "50 MP Leica Main + 50 MP Telephoto + 12 MP Ultra",
@@ -324,7 +324,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "512 GB",
         "battery": "5000 mAh",
-        "price": "$350",
+        "price": "₱18,990",
         "os": "Android 14, HyperOS",
         "weight": "186 g",
         "camera_setup": "64 MP Main + 8 MP Ultrawide + 2 MP Macro",
@@ -342,7 +342,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "512 GB",
         "battery": "5000 mAh",
-        "price": "$520",
+        "price": "₱27,999",
         "os": "Android 14, Funtouch 14",
         "weight": "188 g",
         "camera_setup": "50 MP Main + 50 MP Telephoto + 50 MP Ultrawide",
@@ -360,7 +360,7 @@ cellphones_db = [
         "ram": "16 GB",
         "storage": "512 GB",
         "battery": "5000 mAh",
-        "price": "$999",
+        "price": "₱57,990",
         "os": "Android 14, ColorOS 14",
         "weight": "221 g",
         "camera_setup": "50 MP Quad Main + Dual Periscope Telephoto",
@@ -378,7 +378,7 @@ cellphones_db = [
         "ram": "12 GB",
         "storage": "256 GB",
         "battery": "5000 mAh",
-        "price": "$320",
+        "price": "₱15,999",
         "os": "Android 14, XOS 14",
         "weight": "194 g",
         "camera_setup": "108 MP OIS Main + 2 MP Macro + 2 MP Depth",
