@@ -24,7 +24,11 @@
   "routes": [
     {
       "src": "/cellphones(.*)",
-      "dest": "/api/index.py"
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/images/$1"
     },
     {
       "src": "/styles.css",
@@ -33,10 +37,6 @@
     {
       "src": "/app.js",
       "dest": "/app.js"
-    },
-    {
-      "src": "/images/(.*)",
-      "dest": "/images/$1"
     },
     {
       "src": "/(.*)",

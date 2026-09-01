@@ -2,6 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles  # 1. Import StaticFiles
 
 app = FastAPI()
 
@@ -12,6 +13,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 2. Mount the 'images' folder so /images/filename.jpg requests work
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 @app.get("/")
 def read_root():

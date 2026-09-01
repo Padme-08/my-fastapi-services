@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000/cellphones";
+// Use a relative path so it works both locally and on Vercel
+const API_URL = "/cellphones";
 
 document.addEventListener("DOMContentLoaded", () => {
   getAllCellphones();
@@ -9,13 +10,16 @@ function getAllCellphones() {
   listContainer.innerHTML = "<p style='color: #94a3b8; grid-column: 1/-1; text-align: center;'>Loading catalog...</p>";
 
   fetch(API_URL)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.json();
+    })
     .then(data => {
       displayCellphones(data.cellphones);
     })
     .catch(error => {
       console.error("Error fetching cellphones:", error);
-      listContainer.innerHTML = "<p style='color: #f87171; grid-column: 1/-1; text-align: center;'>Failed to fetch data from API. Please check your backend terminal.</p>";
+      listContainer.innerHTML = "<p style='color: #f87171; grid-column: 1/-1; text-align: center;'>Failed to fetch data from API. Please check your backend.</p>";
     });
 }
 
@@ -25,7 +29,10 @@ function searchCellphones() {
   listContainer.innerHTML = "<p style='color: #94a3b8; grid-column: 1/-1; text-align: center;'>Searching...</p>";
 
   fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.json();
+    })
     .then(data => {
       displayCellphones(data.results);
     })
