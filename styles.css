@@ -124,7 +124,8 @@ button.secondary:hover {
   transform: rotateY(180deg);
 }
 
-.card-front, .card-back {
+.card-front, 
+.card-back {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -244,6 +245,7 @@ button.secondary:hover {
 .specs-scroll::-webkit-scrollbar {
   width: 4px;
 }
+
 .specs-scroll::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
