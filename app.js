@@ -5,23 +5,23 @@ const BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.ho
   ? 'http://127.0.0.1:8000/api/v1/cellphones'
   : '/api/v1/cellphones';
 
-// Get DOM Elements matching index.html IDs
+// Get DOM Elements
 const searchInput = document.getElementById('searchInput');
 const container = document.getElementById('cellphonesList');
 
-// Fetch and render all cellphones when page loads
+// Fetch and render all cellphones on load
 document.addEventListener('DOMContentLoaded', () => {
   getAllCellphones();
 });
 
-// Add Enter key listener for the search input
+// Search input enter key
 if (searchInput) {
   searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') searchCellphones();
   });
 }
 
-// Fetch all cellphones from API (called by "Show All" button)
+// Fetch all cellphones
 async function getAllCellphones() {
   if (searchInput) searchInput.value = '';
   renderLoading();
@@ -48,7 +48,7 @@ async function getAllCellphones() {
   }
 }
 
-// Search cellphones from API (called by "Search" button)
+// Search cellphones
 async function searchCellphones() {
   const query = searchInput ? searchInput.value.trim() : '';
   if (!query) {
@@ -59,7 +59,7 @@ async function searchCellphones() {
   renderLoading();
 
   try {
-    const response = await fetch(`\({BASE_URL}/search?q=\){encodeURIComponent(query)}`, {
+    const response = await fetch(`${BASE_URL}/search?q=${encodeURIComponent(query)}`, {
       method: 'GET',
       headers: {
         'x-api-key': API_KEY,
@@ -80,8 +80,80 @@ async function searchCellphones() {
   }
 }
 
+// Card flip toggle handler
+function toggleCard(cardElement) {
+  cardElement.classList.toggle('flipped');
+}
+
 // Helper: Render loading state
 function renderLoading() {
   if (container) {
-    container.innerHTML = `
-Loading cellphones...`;}}// Helper: Render error messagefunction renderError(message) {if (container) {container.innerHTML = `${message}`;}}// Card flip toggle handlerfunction toggleCard(cardElement) {cardElement.classList.toggle('flipped');}// Helper: Render 3D flip cards into HTMLfunction renderCellphones(cellphones) {if (!container) return;if (!cellphones || cellphones.length === 0) {container.innerHTML = `No cellphones found.`;return;}container.innerHTML = cellphones.map(phone => `${phone.brand}${phone.name}Click to view specs →${phone.name}${phone.price}Model No.${phone.model_number}Release Year${phone.release_year}Display${phone.display}Chipset${phone.chipset}RAM / Storage${phone.ram} /${phone.storage}Battery${phone.battery}OS${phone.os}Weight${phone.weight}Camera${phone.camera_setup}Overview${phone.description}← Click to flip back`).join('');}
+    container.innerHTML = `<p class="loading">Loading cellphones...</p>`;
+  }
+}
+
+// Helper: Render error message
+function renderError(message) {
+  if (container) {
+    container.innerHTML = `<p class="error">${message}</p>`;
+  }
+}
+
+// Helper: Render 3D flip cards
+function renderCellphones(cellphones) {
+  if (!container) return;
+
+  if (!cellphones || cellphones.length === 0) {
+    container.innerHTML = `<p class="no-results">No cellphones found.</p>`;
+    return;
+  }
+
+  container.innerHTML = cellphones.map(phone => {
+    // Resolve relative backend image path for local vs production
+    const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+    const imageSrc = phone.image && phone.image.startsWith('http')
+      ? phone.image
+      : isLocal
+        ? `http://127.0.0.1:8000${phone.image}`
+        : phone.image;
+
+    return `
+      <div class="card-container" onclick="toggleCard(this)">
+        <div class="card-inner">
+          <!-- FRONT FACE -->
+          <div class="card-front">
+            <span class="brand-badge">${phone.brand || ''}</span>
+            <img src="${imageSrc}" alt="${phone.name || 'Cellphone'}" onerror="this.src='https://placehold.co/300x400/0f172a/38bdf8?text=No+Image';">
+            <div class="title-container">
+              <h3>${phone.name || ''}</h3>
+              <div class="action-tag">Click to view specs →</div>
+            </div>
+          </div>
+
+          <!-- BACK FACE -->
+          <div class="card-back">
+            <div class="back-header">
+              <h4>${phone.name || ''}</h4>
+              <span class="price-tag">${phone.price || 'N/A'}</span>
+            </div>
+
+            <div class="specs-scroll">
+              <div class="spec-item"><span class="spec-label">Model No.</span><span class="spec-value">${phone.model_number || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">Release Year</span><span class="spec-value">${phone.release_year || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">Display</span><span class="spec-value">${phone.display || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">Chipset</span><span class="spec-value">${phone.chipset || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">RAM / Storage</span><span class="spec-value">${phone.ram || 'N/A'} / ${phone.storage || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">Battery</span><span class="spec-value">${phone.battery || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">OS</span><span class="spec-value">${phone.os || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">Weight</span><span class="spec-value">${phone.weight || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">Camera</span><span class="spec-value">${phone.camera_setup || 'N/A'}</span></div>
+              <div class="spec-item"><span class="spec-label">Overview</span><span class="spec-value">${phone.description || ''}</span></div>
+            </div>
+
+            <div class="flip-back-hint">← Click to flip back</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
