@@ -1,10 +1,45 @@
 import os
-from fastapi import FastAPI
+from typing import Optional, List
+from fastapi import FastAPI, HTTPException, Header, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from datetime import datetime
+from pydantic import BaseModel, Field
 
-app = FastAPI()
+# ==============================================================================
+# PYDANTIC DATA MODEL
+# ==============================================================================
+class Cellphone(BaseModel):
+    id: int = Field(gt=0, description="Unique item ID")
+    brand: str = Field(min_length=1, description="Manufacturer brand name")
+    name: str = Field(min_length=1, description="Model display name")
+    model_number: str = Field(min_length=1, description="Hardware model code")
+    release_year: int = Field(ge=2000, le=2100, description="Year of release")
+    display: str = Field(min_length=1, description="Screen specification")
+    chipset: str = Field(min_length=1, description="Processor / SoC")
+    ram: str = Field(min_length=1, description="RAM memory size")
+    storage: str = Field(min_length=1, description="Internal storage size")
+    battery: str = Field(min_length=1, description="Battery capacity")
+    price: str = Field(min_length=1, description="Localized price string")
+    os: str = Field(min_length=1, description="Operating system")
+    weight: str = Field(min_length=1, description="Device weight")
+    camera_setup: str = Field(min_length=1, description="Camera specifications")
+    description: str = Field(min_length=1, description="Short summary/features")
+    image: str = Field(min_length=1, description="Static image path")
+
+
+# ==============================================================================
+# FASTAPI APP SETUP
+# ==============================================================================
+API_KEY = "student-api-key-123"
+API_VERSION = "1.0"
+
+app = FastAPI(
+    title="Cellphones Hub API",
+    description="A beginner friendly REST API containing information about cellphones",
+    version=API_VERSION
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,15 +50,13 @@ app.add_middleware(
 )
 
 # Mount the 'images' folder so /images/filename.jpg requests work
-app.mount("/images", StaticFiles(directory="images"), name="images")
+if os.path.exists("images"):
+    app.mount("/images", StaticFiles(directory="images"), name="images")
 
-@app.get("/")
-def read_root():
-    if os.path.exists("index.html"):
-        return FileResponse("index.html")
-    return {"message": "Welcome to the Cellphones Hub API!"}
 
-# Cellphone database updated with local image paths and prices in PHP (₱)
+# ==============================================================================
+# DATASET
+# ==============================================================================
 cellphones_db = [
     {
         "id": 1,
@@ -387,25 +420,97 @@ cellphones_db = [
     }
 ]
 
-@app.get("/cellphones")
-def get_all_cellphones():
-    return {"cellphones": cellphones_db}
+# Validate the starting dataset when the application launches:
+validated_cellphones = [Cellphone(**phone).model_dump() for phone in cellphones_db]
+cellphones_db = validated_cellphones
 
-@app.get("/cellphones/search")
-def search_cellphones(q: str = ""):
-    query = q.lower().strip()
-    if not query:
-        return {"results": cellphones_db}
-    
-    filtered = [
-        phone for phone in cellphones_db
-        if query in phone["name"].lower() or query in phone["brand"].lower()
-    ]
-    return {"results": filtered}
 
-@app.get("/cellphones/{phone_id}")
-def get_cellphone_by_id(phone_id: int):
+# ==============================================================================
+# API KEY AUTHENTICATION
+# ==============================================================================
+def verify_api_key(x_api_key: Optional[str] = Header(default=None)):
+    if x_api_key != API_KEY:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or missing API key."
+        )
+    return True
+
+
+# ==============================================================================
+# ROUTE HANDLERS
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# HEALTH CHECK (Public)
+# ------------------------------------------------------------------------------
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok",
+        "service": "Cellphones Hub API",
+        "version": API_VERSION,
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+
+
+@app.get("/")
+def read_root():
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
+    return {"message": "Welcome to the Cellphones Hub API!"}
+
+
+# ------------------------------------------------------------------------------
+# GET ALL CELLPHONES (Protected)
+# ------------------------------------------------------------------------------
+@app.get("/api/v1/cellphones", dependencies=[Depends(verify_api_key)])
+def get_cellphones():
+    return {
+        "count": len(cellphones_db),
+        "cellphones": cellphones_db
+    }
+
+
+# ------------------------------------------------------------------------------
+# SEARCH CELLPHONES (Protected)
+# ------------------------------------------------------------------------------
+@app.get("/api/v1/cellphones/search", dependencies=[Depends(verify_api_key)])
+def search_cellphones(q: str = Query(..., min_length=1)):
+    q_clean = q.lower().strip()
+    results = []
+
+    for phone in cellphones_db:
+        searchable_text = (
+            f"{phone['brand']} "
+            f"{phone['name']} "
+            f"{phone['model_number']} "
+            f"{phone['release_year']} "
+            f"{phone['display']} "
+            f"{phone['chipset']} "
+            f"{phone['ram']} "
+            f"{phone['storage']} "
+            f"{phone['os']} "
+            f"{phone['camera_setup']} "
+            f"{phone['description']}"
+        ).lower()
+
+        if q_clean in searchable_text:
+            results.append(phone)
+
+    return {
+        "query": q,
+        "count": len(results),
+        "results": results
+    }
+
+
+# ------------------------------------------------------------------------------
+# GET ONE CELLPHONE (Protected)
+# ------------------------------------------------------------------------------
+@app.get("/api/v1/cellphones/{phone_id}", dependencies=[Depends(verify_api_key)])
+def get_cellphone(phone_id: int):
     for phone in cellphones_db:
         if phone["id"] == phone_id:
             return phone
-    return {"error": "Cellphone not found"}
+    raise HTTPException(status_code=404, detail="Cellphone not found.")
