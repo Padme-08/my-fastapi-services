@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = "http://127.0.0.1:8000/api/v1/cellphones";
+const API_URL = "https://my-fastapi-services.vercel.app/api/v1/cellphones";
 const API_KEY = "your-secret-api-key";
 
 // Reusable headers for authenticated API requests
