@@ -26,6 +26,7 @@ header h1 {
   background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
@@ -45,6 +46,7 @@ header p {
   margin: 0 auto 45px auto;
   background: rgba(30, 41, 59, 0.5);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 8px;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -135,6 +137,7 @@ button.secondary:hover {
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(30, 41, 59, 0.6);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;

@@ -49,7 +49,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount the 'images' folder so /images/filename.jpg requests work
 if os.path.exists("images"):
     app.mount("/images", StaticFiles(directory="images"), name="images")
 
@@ -420,7 +419,6 @@ cellphones_db = [
     }
 ]
 
-# Validate the starting dataset when the application launches:
 validated_cellphones = [Cellphone(**phone).model_dump() for phone in cellphones_db]
 cellphones_db = validated_cellphones
 
@@ -441,9 +439,6 @@ def verify_api_key(x_api_key: Optional[str] = Header(default=None)):
 # ROUTE HANDLERS
 # ==============================================================================
 
-# ------------------------------------------------------------------------------
-# HEALTH CHECK (Public)
-# ------------------------------------------------------------------------------
 @app.get("/health")
 def health_check():
     return {
@@ -461,9 +456,6 @@ def read_root():
     return {"message": "Welcome to the Cellphones Hub API!"}
 
 
-# ------------------------------------------------------------------------------
-# GET ALL CELLPHONES (Protected)
-# ------------------------------------------------------------------------------
 @app.get("/api/v1/cellphones", dependencies=[Depends(verify_api_key)])
 def get_cellphones():
     return {
@@ -472,9 +464,6 @@ def get_cellphones():
     }
 
 
-# ------------------------------------------------------------------------------
-# SEARCH CELLPHONES (Protected)
-# ------------------------------------------------------------------------------
 @app.get("/api/v1/cellphones/search", dependencies=[Depends(verify_api_key)])
 def search_cellphones(q: str = Query(..., min_length=1)):
     q_clean = q.lower().strip()
@@ -505,9 +494,6 @@ def search_cellphones(q: str = Query(..., min_length=1)):
     }
 
 
-# ------------------------------------------------------------------------------
-# GET ONE CELLPHONE (Protected)
-# ------------------------------------------------------------------------------
 @app.get("/api/v1/cellphones/{phone_id}", dependencies=[Depends(verify_api_key)])
 def get_cellphone(phone_id: int):
     for phone in cellphones_db:

@@ -1,5 +1,9 @@
 const API_KEY = 'student-api-key-123';
-const BASE_URL = '/api/v1/cellphones';
+
+// Automatically choose local endpoint or Vercel relative path
+const BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+  ? 'http://127.0.0.1:8000/api/v1/cellphones'
+  : '/api/v1/cellphones';
 
 // Get DOM Elements matching index.html IDs
 const searchInput = document.getElementById('searchInput');
@@ -36,13 +40,11 @@ async function getAllCellphones() {
     }
 
     const data = await response.json();
-    
-    // Safely extract array whether backend returns [...] or {"cellphones": [...]}
     const cellphones = Array.isArray(data) ? data : (data.cellphones || []);
     renderCellphones(cellphones);
   } catch (error) {
     console.error('Error fetching cellphones:', error);
-    renderError('Failed to fetch data from API. Please check your backend.');
+    renderError('Failed to fetch data from API. Please check backend connection.');
   }
 }
 
@@ -70,8 +72,6 @@ async function searchCellphones() {
     }
 
     const data = await response.json();
-
-    // Safely extract array whether backend returns [...] or {"results": [...]}
     const cellphones = Array.isArray(data) ? data : (data.results || []);
     renderCellphones(cellphones);
   } catch (error) {
@@ -84,4 +84,4 @@ async function searchCellphones() {
 function renderLoading() {
   if (container) {
     container.innerHTML = `
-Loading cellphones...`;}}// Helper: Render error messagefunction renderError(message) {if (container) {container.innerHTML = `${message}`;}}// Helper: Render cards into HTMLfunction renderCellphones(cellphones) {if (!container) return;if (!cellphones || cellphones.length === 0) {container.innerHTML = `No cellphones found.`;return;}container.innerHTML = cellphones.map(phone => `${phone.name}Brand: ${phone.brand}Price: ${phone.price}Chipset: ${phone.chipset}Storage / RAM: ${phone.storage} /${phone.ram}${phone.description}`).join('');}
+Loading cellphones...`;}}// Helper: Render error messagefunction renderError(message) {if (container) {container.innerHTML = `${message}`;}}// Card flip toggle handlerfunction toggleCard(cardElement) {cardElement.classList.toggle('flipped');}// Helper: Render 3D flip cards into HTMLfunction renderCellphones(cellphones) {if (!container) return;if (!cellphones || cellphones.length === 0) {container.innerHTML = `No cellphones found.`;return;}container.innerHTML = cellphones.map(phone => `${phone.brand}${phone.name}Click to view specs →${phone.name}${phone.price}Model No.${phone.model_number}Release Year${phone.release_year}Display${phone.display}Chipset${phone.chipset}RAM / Storage${phone.ram} /${phone.storage}Battery${phone.battery}OS${phone.os}Weight${phone.weight}Camera${phone.camera_setup}Overview${phone.description}← Click to flip back`).join('');}
