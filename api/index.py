@@ -10,7 +10,7 @@ API_VERSION = "1.0"
 
 app = FastAPI(
     title="Cellphones Hub API",
-    description="A modular REST API containing information about cellphones with 20 specs in Pesos",
+    description="A modular REST API containing information about cellphones with 20 specs",
     version=API_VERSION
 )
 

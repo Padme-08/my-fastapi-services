@@ -1,8 +1,5 @@
 const API_KEY = 'student-api-key-123';
-const BASE_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
-  ? 'http://127.0.0.1:8000/api/v1/cellphones'
-  : '/api/v1/cellphones';
-
+const BASE_URL = 'https://my-fastapi-services.vercel.app/api/v1/cellphones';
 let globalPhonesCache = [];
 const searchInput = document.getElementById('searchInput');
 const container = document.getElementById('cellphonesList');
@@ -15,7 +12,7 @@ if (searchInput) {
   });
 }
 
-// ================= MODULE 1: NAVIGATION & TABS =================
+// ================= NAVIGATION & TABS =================
 function switchTab(tabId, btnElement) {
   document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -29,7 +26,7 @@ function switchTab(tabId, btnElement) {
   btnElement.classList.add('active');
 }
 
-// ================= MODULE 2: CATALOG & API FETCHING =================
+// ================= CATALOG & API FETCHING =================
 async function getAllCellphones() {
   if (searchInput) searchInput.value = '';
   renderLoading();
@@ -114,7 +111,7 @@ function renderCellphones(phones) {
   }).join('');
 }
 
-// ================= MODULE 3: COMPARISON TOOL =================
+// ================= COMPARISON TOOL =================
 function populateDropdowns() {
   const selA = document.getElementById('phoneASelect');
   const selB = document.getElementById('phoneBSelect');
@@ -160,7 +157,7 @@ function updateComparison() {
   resDiv.innerHTML = `<div class="comparison-grid">${buildCol(pA)}${buildCol(pB)}</div>`;
 }
 
-// ================= MODULE 4: BUDGET RECOMMENDER =================
+// ================= BUDGET RECOMMENDER =================
 function calculateRecommendation() {
   const budgetVal = document.getElementById('maxBudgetInput').value;
   const priority = document.getElementById('prioritySelect').value;
