@@ -9,24 +9,81 @@
 <body>
   <header>
     <h1>Cellphones Hub</h1>
+    <p>Explore, compare, and discover your next smartphone.</p>
+    
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('catalog', this)">Catalog</button>
+      <button class="tab-btn" onclick="switchTab('compare', this)">Compare</button>
+      <button class="tab-btn" onclick="switchTab('budget', this)">Budget Recommender</button>
+    </nav>
   </header>
 
   <main>
-    <section class="search-container">
-      <input type="text" id="searchInput" placeholder="Search for a cellphone...">
-      <button onclick="searchCellphones()">Search</button>
-      <button class="secondary" onclick="getAllCellphones()">Show All</button>
+    <!-- VIEW 1: CATALOG -->
+    <section id="catalogView" class="view-section active">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search cellphones...">
+        <button onclick="searchCellphones()">Search</button>
+        <button class="secondary" onclick="getAllCellphones()">Reset</button>
+      </div>
+      <section>
+        <div id="cellphonesList">Loading cellphones...</div>
+      </section>
     </section>
 
-    <section>
-      <h2>Cellphones</h2>
-      <div id="cellphonesList">
-        Loading cellphones...
+    <!-- VIEW 2: COMPARE -->
+    <section id="compareView" class="view-section">
+      <div class="tool-card">
+        <h2>Side-by-Side Comparison</h2>
+        <p class="tool-desc">Select two devices to contrast specifications head-to-head.</p>
+        <div class="compare-selectors">
+          <div class="select-group">
+            <label for="phoneASelect">Device 1</label>
+            <select id="phoneASelect" onchange="updateComparison()"><option value="">Select device...</option></select>
+          </div>
+          <div class="vs-badge">VS</div>
+          <div class="select-group">
+            <label for="phoneBSelect">Device 2</label>
+            <select id="phoneBSelect" onchange="updateComparison()"><option value="">Select device...</option></select>
+          </div>
+        </div>
+        <div id="comparisonResult" class="comparison-result">
+          <p class="no-results">Select two devices above to start comparing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: BUDGET -->
+    <section id="budgetView" class="view-section">
+      <div class="tool-card">
+        <h2>Budget Recommender</h2>
+        <p class="tool-desc">Find the optimal smartphone tailored to your financial limit.</p>
+        <div class="budget-form">
+          <div class="input-group">
+            <label for="maxBudgetInput">Maximum Budget (₱)</label>
+            <input type="number" id="maxBudgetInput" placeholder="e.g. 35000" min="0" step="1000">
+          </div>
+          <div class="input-group">
+            <label for="prioritySelect">Key Priority</label>
+            <select id="prioritySelect">
+              <option value="overall">Best Overall Value</option>
+              <option value="battery">Max Battery Capacity</option>
+              <option value="storage">Max Internal Storage</option>
+              <option value="ram">Max RAM Memory</option>
+              <option value="camera">Best Camera Setup</option>
+              <option value="refresh_rate">High Refresh Rate</option>
+              <option value="water_resistance">Water Resistance</option>
+              <option value="charging_speed">Fast Charging Speed</option>
+              <option value="release_year">Newest Release Year</option>
+            </select>
+          </div>
+          <button onclick="calculateRecommendation()">Find Best Match</button>
+        </div>
+        <div id="budgetResult" class="budget-result"></div>
       </div>
     </section>
   </main>
 
-  <!-- Pointing to app.js to match your folder structure -->
   <script src="app.js"></script>
 </body>
 </html>
