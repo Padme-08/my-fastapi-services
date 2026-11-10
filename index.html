@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cellphones Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- LOGIN MODAL -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Sign In to Cellphones Hub</h2>
+        <p>Access the full database of 20+ devices, comparison tool, and budget recommender.</p>
+      </div>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label for="usernameInput">Username</label>
+          <input type="text" id="usernameInput" placeholder="Enter username (e.g. student)" required>
+        </div>
+        <div class="input-group">
+          <label for="passwordInput">Password</label>
+          <input type="password" id="passwordInput" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn-primary full-width">Sign In</button>
+      </form>
+      <div class="modal-divider"><span>OR</span></div>
+      <button class="btn-secondary full-width" onclick="enterGuestMode()">Continue as Guest</button>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="top-bar">
+      <div class="logo-title">
+        <h1>Cellphones Hub</h1>
+        <p>Explore, compare, and discover your next smartphone.</p>
+      </div>
+      <div id="userStatusContainer" class="user-status">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+    </div>
+    
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('catalog', this)">Catalog</button>
+      <button class="tab-btn" onclick="switchTab('compare', this)">Compare</button>
+      <button class="tab-btn" onclick="switchTab('budget', this)">Budget Recommender</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- VIEW 1: CATALOG -->
+    <section id="catalogView" class="view-section active">
+      <div id="guestBanner" class="guest-banner" style="display: none;">
+        <span>🔒 <strong>Guest Mode:</strong> Showing 4 sample devices. Sign in to unlock all 20+ smartphones.</span>
+        <button onclick="openLoginModal()">Sign In Now</button>
+      </div>
+
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by brand, name, or chipset...">
+        <button onclick="searchCellphones()">Search</button>
+        <button class="secondary" onclick="getAllCellphones()">Reset</button>
+      </div>
+      <section>
+        <div id="cellphonesList">Loading cellphones...</div>
+      </section>
+    </section>
+
+    <!-- VIEW 2: COMPARE -->
+    <section id="compareView" class="view-section">
+      <!-- Lock Overlay for Guests -->
+      <div id="compareLockOverlay" class="lock-overlay" style="display: none;">
+        <div class="lock-card">
+          <span class="lock-icon">🔒</span>
+          <h3>Feature Locked</h3>
+          <p>Side-by-side spec comparison requires an active account.</p>
+          <button onclick="openLoginModal()">Sign In to Unlock</button>
+        </div>
+      </div>
+
+      <!-- Compare Content -->
+      <div id="compareContent" class="tool-card">
+        <h2>Side-by-Side Comparison</h2>
+        <p class="tool-desc">Select two devices to contrast all 20 specifications head-to-head.</p>
+        <div class="compare-selectors">
+          <div class="select-group">
+            <label for="phoneASelect">Device 1</label>
+            <select id="phoneASelect" onchange="updateComparison()"><option value="">Select device...</option></select>
+          </div>
+          <div class="vs-badge">VS</div>
+          <div class="select-group">
+            <label for="phoneBSelect">Device 2</label>
+            <select id="phoneBSelect" onchange="updateComparison()"><option value="">Select device...</option></select>
+          </div>
+        </div>
+        <div id="comparisonResult" class="comparison-result">
+          <p class="no-results">Select two devices above to start comparing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: BUDGET RECOMMENDER -->
+    <section id="budgetView" class="view-section">
+      <!-- Lock Overlay for Guests -->
+      <div id="budgetLockOverlay" class="lock-overlay" style="display: none;">
+        <div class="lock-card">
+          <span class="lock-icon">🔒</span>
+          <h3>Feature Locked</h3>
+          <p>Budget recommendations require access to the full smartphone database.</p>
+          <button onclick="openLoginModal()">Sign In to Unlock</button>
+        </div>
+      </div>
+
+      <!-- Budget Content -->
+      <div id="budgetContent" class="tool-card">
+        <h2>Smart Budget Recommender</h2>
+        <p class="tool-desc">Find the optimal smartphone tailored to your financial limit and key priorities.</p>
+        <div class="budget-form">
+          <div class="input-group">
+            <label for="maxBudgetInput">Maximum Budget (₱)</label>
+            <input type="number" id="maxBudgetInput" placeholder="e.g. 35000" min="0" step="1000">
+          </div>
+          <div class="input-group">
+            <label for="prioritySelect">Key Priority</label>
+            <select id="prioritySelect">
+              <option value="overall">Best Overall Value</option>
+              <option value="battery">Max Battery Capacity</option>
+              <option value="storage">Max Internal Storage</option>
+              <option value="ram">Max RAM Memory</option>
+              <option value="camera">Best Camera Resolution</option>
+              <option value="refresh_rate">High Display Refresh Rate</option>
+              <option value="water_resistance">Water Resistance Rating</option>
+              <option value="charging_speed">Fastest Charging Speed</option>
+              <option value="release_year">Newest Release Year</option>
+            </select>
+          </div>
+          <button onclick="calculateRecommendation()">Find Best Match</button>
+        </div>
+        <div id="budgetResult" class="budget-result"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
