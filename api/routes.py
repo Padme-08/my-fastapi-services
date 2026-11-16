@@ -102,11 +102,15 @@ def create_cellphone(phone: Cellphone):
             new_id = cur.fetchone()["id"]
             conn.commit()
             return {"message": "Record created successfully", "id": new_id}
+    except psycopg2.IntegrityError:
+        if conn:
+            conn.rollback()
+        raise HTTPException(status_code=400, detail="A cellphone with this name already exists.")
     except Exception as e:
         if conn:
             conn.rollback()
         print(f"Error in POST /cellphones: {e}")
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail="Database Inserted Failed")
     finally:
         if conn:
             conn.close()
@@ -140,6 +144,10 @@ def update_cellphone(phone_id: int, phone: Cellphone):
             return {"message": "Record updated successfully"}
     except HTTPException:
         raise
+    except psycopg2.IntegrityError:
+        if conn:
+            conn.rollback()
+        raise HTTPException(status_code=400, detail="A cellphone with this name already exists.")
     except Exception as e:
         if conn:
             conn.rollback()

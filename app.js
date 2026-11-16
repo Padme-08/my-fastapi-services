@@ -1,6 +1,7 @@
 const API_KEY = 'student-api-key-123';
-const BASE_URL = 'http://127.0.0.1:8000/api/v1/cellphones';
+const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
 const LOCAL_BACKEND_URL = 'http://127.0.0.1:8000';
+const BASE_URL = isLocal ? `${LOCAL_BACKEND_URL}/api/v1/cellphones` : '/api/v1/cellphones';
 
 let globalPhonesCache = [];
 
@@ -177,7 +178,6 @@ async function searchCellphones() {
 function getImageUrl(imgPath) {
   if (!imgPath) return 'https://placehold.co/300x400/0f172a/38bdf8?text=No+Image';
   if (imgPath.startsWith('http')) return imgPath;
-  const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
   return isLocal ? `${LOCAL_BACKEND_URL}${imgPath}` : imgPath;
 }
 
